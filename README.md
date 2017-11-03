@@ -1,12 +1,12 @@
-# yunslave-wifi
+# default-firmware
 
 ## 1. 概述
 
-yunslave-wifi 是WiFi从模式代码工程。支持模块包括W6/W7和W32/W33。
+default-firmware 是WiFi从模式代码工程。支持模块包括W6/W7和W32/W33。
 
 ## 2. 工程结构
 
-yunslave-wifi 工程结构如下：
+default-firmware 工程结构如下：
 
 ```
 |-- docs            : 工程文档
@@ -19,7 +19,7 @@ yunslave-wifi 工程结构如下：
 
 ## 3. 编译与调试
 
-yunslave-wifi 采取intoyuniot编译，具体如下：
+default-firmware 采取intoyuniot编译，具体如下：
 
 ```
 intoyuniot run -t clean   # 清除临时文件
