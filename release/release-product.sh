@@ -33,16 +33,33 @@ release_product() {
     mkdir -p $RELEASE_PRODUCT_VERSION_DIR/tools
 
     cd $RELEASE_DIR
-    if [ "$1"x = "yunslave-w67"x ];then
-        intoyuniot run -d .. -e intorobot-w67 -t clean
-        intoyuniot run -d .. -e intorobot-w67
-        cp ../.intoiotenvs/intorobot-w67/firmware.bin $RELEASE_PRODUCT_VERSION_DIR
+
+    intoyuniot run -d .. -e intorobot-$1 -t clean
+    intoyuniot run -d .. -e intorobot-$1
+    cp ../.intoiotenvs/intorobot-$1/firmware.bin $RELEASE_PRODUCT_VERSION_DIR
+
+    if [ "$1"x = "atom-old"x ];then
         cp -rf $RELEASE_COMMON_DIR/tools/esp8266 $RELEASE_PRODUCT_VERSION_DIR/tools
 
-    elif [ "$1"x = "yunslave-w323"x ];then
-        intoyuniot run -d .. -e intorobot-w323 -t clean
-        intoyuniot run -d .. -e intorobot-w323
-        cp ../.intoiotenvs/intorobot-w323/firmware.bin $RELEASE_PRODUCT_VERSION_DIR
+    elif [ "$1"x = "neutron"x ];then
+        cp -rf $RELEASE_COMMON_DIR/tools/esp8266 $RELEASE_PRODUCT_VERSION_DIR/tools
+
+    elif [ "$1"x = "nut"x ];then
+        cp -rf $RELEASE_COMMON_DIR/tools/esp32 $RELEASE_PRODUCT_VERSION_DIR/tools
+
+    elif [ "$1"x = "fig"x ];then
+        cp -rf $RELEASE_COMMON_DIR/tools/esp32 $RELEASE_PRODUCT_VERSION_DIR/tools
+
+    elif [ "$1"x = "ant"x ];then
+        cp -rf $RELEASE_COMMON_DIR/tools/esp32 $RELEASE_PRODUCT_VERSION_DIR/tools
+
+    elif [ "$1"x = "w67"x ];then
+        cp -rf $RELEASE_COMMON_DIR/tools/esp32 $RELEASE_PRODUCT_VERSION_DIR/tools
+
+    elif [ "$1"x = "w323"x ];then
+        cp -rf $RELEASE_COMMON_DIR/tools/esp32 $RELEASE_PRODUCT_VERSION_DIR/tools
+
+    elif [ "$1"x = "l6"x ];then
         cp -rf $RELEASE_COMMON_DIR/tools/esp32 $RELEASE_PRODUCT_VERSION_DIR/tools
 
     fi
