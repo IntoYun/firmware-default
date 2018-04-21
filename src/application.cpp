@@ -19,12 +19,12 @@ License along with this library; if not, see <http://www.gnu.org/licenses/>.
 
 #include "Arduino.h"
 
-#include "application-nut.h"
-#include "application-atom.h"
-#include "application-fig.h"
-#include "application-fox.h"
-#include "application-neutron.h"
-#include "application-nut.h"
+#include "application-ant.cpp"
+#include "application-atom.cpp"
+#include "application-fig.cpp"
+#include "application-fox.cpp"
+#include "application-neutron.cpp"
+#include "application-nut.cpp"
 
 void setup ()
 {
@@ -36,6 +36,4 @@ void loop ()
     //loop 尽量不要阻塞
     userHandle();
 }
-
-#endif
 

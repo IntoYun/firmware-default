@@ -17,8 +17,6 @@ License along with this library; if not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************
 */
 
-#include "Arduino.h"
-
 /*
  * 智能灯程序
  * 硬件准备：  使用跳线帽把LS与A0相连
@@ -57,7 +55,8 @@ void smartLightSwitchCb(uint8_t *payload, uint32_t len)
 
 void system_event_callback(system_event_t event, int param, uint8_t *data, uint16_t datalen)
 {
-    if ((event == event_cloud_data) && (param == ep_cloud_comm_data)) {
+    //if ((event == event_cloud_data) && (param == ep_cloud_comm_data)) {
+    if ((event == event_cloud_data) && (param == ep_cloud_data_datapoint)) {
         if (RESULT_DATAPOINT_NEW == Cloud.readDatapoint(DPID_BOOL_SWITCH, dpBoolSwitch)) {
             if(dpBoolSwitch) {
                 digitalWrite(LEDPIN, LOW);    // 打开灯泡
