@@ -1,8 +1,8 @@
-# default-firmware
+# 开发板默认固件程序
 
 ## 1. 概述
 
-default-firmware 是WiFi从模式代码工程。支持模块包括W6/W7和W32/W33。
+default-firmware 属于开发板的默认出厂程序。
 
 ## 2. 工程结构
 
@@ -23,11 +23,8 @@ default-firmware 采取intoyuniot编译，具体如下：
 
 ```
 intoyuniot run -t clean   # 清除临时文件
-
-intoyuniot run -e intorobot-w67 -t upload  # 编译和下载w6/w7从模式程序
-
-intoyuniot run -e intorobot-w323 -t upload # 编译和下载w32/w33从模式程序
-
+intoyuniot run -e intorobot-nut -t upload  # 编译和下载nut程序
+intoyuniot run -e intorobot-fig -t upload  # 编译和下载fig程序
 ```
 
 ## 4. 发布
@@ -40,7 +37,5 @@ intoyuniot run -e intorobot-w323 -t upload # 编译和下载w32/w33从模式程�
 3. 进入生产平台
 
 ```
-
-
 
 
