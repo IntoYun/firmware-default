@@ -22,11 +22,15 @@ License along with this library; if not, see <http://www.gnu.org/licenses/>.
  * 硬件准备：  使用跳线帽把LS与A5相连
  */
 
+#include "main.h"
+
 #if PLATFORM_ID == PLATFORM_ANT
 
-PRODUCT_ID(ddab5c4700000359)                        // 产品标识
-PRODUCT_SECRET(c93bbb81ec731fbbaea5625fe12271e1)    // 产品密钥
-PRODUCT_SOFTWARE_VERSION(1.0.0)                     // 产品软件版本号
+const pinmap_t pinMap[PIN_MAP_NUM] = {
+    {"A0", A0}, {"A1", A1}, {"A2", A2}, {"A3", A3}, {"A4", A4}, {"A5", A5},\
+    {"D0", D0}, {"D1", D1}, {"D2", D2}, {"D3", D3}, {"D4", D4}, {"D5", D5}, {"D6", D6},\
+    {"RXD", RXD}, {"TXD", TXD}
+};
 
 #define DPID_BOOL_SWITCH                          1  //布尔型            开关
 #define DPID_DOUBLE_TEMPERATURE                   2  //数值型            温度
@@ -88,7 +92,7 @@ void userInit(void)
     /*******************************************************/
 }
 
-void userHandle (void)
+void userHandle(void)
 {
     /*************此处修改和添加用户处理代码****************/
     if(Cloud.connected() < 0) {
@@ -115,6 +119,59 @@ void userHandle (void)
         }
     }
     /*******************************************************/
+}
+
+bool rfCheck(double freq, char *datarate, int &tx_rssi, int &rx_rssi)
+{
+#define BUFFER_SIZE     8
+    uint8_t txBuffer[BUFFER_SIZE] = {11,2,3,4,5,6,7,8}, rxBuffer[BUFFER_SIZE] = {0};
+    uint8_t sf,bw;
+
+    // datarate
+    int x0, x1;
+    if(sscanf(datarate, "SF%dBW%d", &x0, &x1) == 2) {
+        switch (x0) {
+            case  7: sf = 7;  break;
+            case  8: sf = 8;  break;
+            case  9: sf = 9;  break;
+            case 10: sf = 10; break;
+            case 11: sf = 11; break;
+            case 12: sf = 12; break;
+            default: sf = 7;  break;
+        }
+        switch (x1) {
+            case 125: bw = 0; break;
+            case 250: bw = 1; break;
+            case 500: bw = 2; break;
+            default: bw = 0; break;
+        }
+    }
+
+    Cloud.setProtocol(PROTOCOL_P2P); //使用点对点通讯
+    LoRa.radioSetFreq((uint32_t)(freq*1000000));         //设置频率
+    LoRa.radioSetSF(sf);
+    LoRa.radioSetBandwidth(bw);
+    LoRa.radioSetIqInverted(true);
+
+    if(LoRa.radioReadReg(0x42) != 0x12){
+        goto failure;
+    }
+    if(LoRa.radioSend(txBuffer, BUFFER_SIZE, 2000) < 0) {
+        goto failure;
+    }
+
+    LoRa.radioStartRx(0);
+    if(LoRa.radioRx(rxBuffer, BUFFER_SIZE, rx_rssi) == BUFFER_SIZE) {
+        if(rxBuffer[0] == 22) {
+            tx_rssi = rxBuffer[1];
+            return true;
+        }
+    }
+
+failure:
+    return false;
+
+#undef BUFFER_SIZE
 }
 
 #endif

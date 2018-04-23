@@ -24,6 +24,10 @@ License along with this library; if not, see <http://www.gnu.org/licenses/>.
 #include "firmware_at_parse.h"
 #include "firmware_at.h"
 #include "firmware_log.h"
+#include "main.h"
+
+const char *pinModeString[] = {"INPUT", "OUTPUT", "INPUT_PULLUP", "INPUT_PULLDOWN"};
+
 
 void at_exeCmdNull(uint8_t id)
 {
@@ -70,43 +74,303 @@ void at_exeCmdConfig(uint8_t id)
 void at_queryCmdInfo(uint8_t id)
 {
     log_v("at_queryCmdInfo\r\n");
+    String infoString = "";
+    char buffer[17];
+    int mode;
+
+    infoString = "+INFO:\"";
+    System.get(SYSTEM_PARAMS_PRODUCT_BOARD_NAME, buffer, sizeof(buffer));
+    infoString += buffer;
+    infoString += "_v";
+    System.get(SYSTEM_PARAMS_PRODUCT_SOFTWARE_VERSION, buffer, sizeof(buffer));
+    infoString += buffer;
+    infoString += "\",\"";
+
+    System.get(SYSTEM_PARAMS_PRODUCT_BOARD_NAME, buffer, sizeof(buffer));
+    infoString += buffer;
+    infoString += "\",\"";
+    infoString += System.deviceID();
+    infoString += "\",";
+
+    System.get(SYSTEM_PARAMS_SECURITY_MODE, mode);
+    infoString += mode;
+    infoString += "\r\n";
+    at_response(infoString.c_str());
     at_response_ok();
 }
 
 void at_setupCmdGetPinMode(uint8_t id, char *pPara)
 {
     log_v("at_setupCmdGetPinMode\r\n");
+    char pinName[16] = {0};
+    int pin = -1;
+    String retString = "";
+    PinMode mode = OUTPUT;
+
+    if (*pPara++ != '=') {// skip '='
+        goto failure;
+    }
+    //获取第1个参数 Pin Name
+    if(at_data_str_copy(pinName, &pPara, sizeof(pinName)) <= 0) {
+        goto failure;
+    }
+
+    pin = pinNameToPin(pinName);
+    if(pin < 0) {
+        goto failure;
+    }
+
+    log_v("pinName = %s, pin = %d\r\n", pinName, pin);
+
+    mode = getPinMode(pin);
+    retString = "+GETPINMODE:";
+    retString += (int)mode;
+    retString += "\r\n";
+    at_response(retString.c_str());
     at_response_ok();
+    return;
+
+failure:
+    at_response_error();
 }
 
 void at_setupCmdSetPinMode(uint8_t id, char *pPara)
 {
     log_v("at_setupCmdSetPinMode\r\n");
+    char pinName[16] = {0};
+    int pin = -1, mode;
+
+    if (*pPara++ != '=') {// skip '='
+        goto failure;
+    }
+    //获取第1个参数 Pin Name
+    if(at_data_str_copy(pinName, &pPara, sizeof(pinName)) <= 0) {
+        goto failure;
+    }
+    if (*pPara++ != ',') { // skip ','
+        goto failure;
+    }
+    //获取第2个参数 mode
+    if(!at_get_next_int_dec(&pPara, &mode)) {
+        goto failure;
+    }
+
+    pin = pinNameToPin(pinName);
+    if(pin < 0) {
+        goto failure;
+    }
+
+    log_v("pinName = %s, pin = %d, pinMode = (%d)%s\r\n", pinName, pin, mode, pinModeString[mode]);
+    pinMode(pin, mode);
     at_response_ok();
+    return;
+
+failure:
+    at_response_error();
 }
 
 void at_setupCmdAnalogRead(uint8_t id, char *pPara)
 {
     log_v("at_setupCmdAnalogRead\r\n");
+    char pinName[16] = {0};
+    int pin = -1;
+    String retString = "";
+
+    if (*pPara++ != '=') {// skip '='
+        goto failure;
+    }
+    //获取第1个参数 Pin Name
+    if(at_data_str_copy(pinName, &pPara, sizeof(pinName)) <= 0) {
+        goto failure;
+    }
+
+    pin = pinNameToPin(pinName);
+    if(pin < 0) {
+        goto failure;
+    }
+
+    log_v("pinName = %s, pin = %d\r\n", pinName, pin);
+    retString = "+ANALOGREAD:";
+    retString += analogRead(pin);
+    retString += "\r\n";
+    at_response(retString.c_str());
     at_response_ok();
+    return;
+
+failure:
+    at_response_error();
 }
 
 void at_setupCmdDigitalRead(uint8_t id, char *pPara)
 {
     log_v("at_setupCmdDigitalRead\r\n");
+    char pinName[16] = {0};
+    int pin = -1;
+    String retString = "";
+
+    if (*pPara++ != '=') {// skip '='
+        goto failure;
+    }
+    //获取第1个参数 Pin Name
+    if(at_data_str_copy(pinName, &pPara, sizeof(pinName)) <= 0) {
+        goto failure;
+    }
+
+    pin = pinNameToPin(pinName);
+    if(pin < 0) {
+        goto failure;
+    }
+
+    log_v("pinName = %s, pin = %d\r\n", pinName, pin);
+    retString = "+DIGITALREAD:";
+    retString += digitalRead(pin);
+    retString += "\r\n";
+    at_response(retString.c_str());
     at_response_ok();
+    return;
+
+failure:
+    at_response_error();
 }
 
 void at_setupCmdDigitalWrite(uint8_t id, char *pPara)
 {
     log_v("at_setupCmdDigitalWrite\r\n");
+    char pinName[16] = {0};
+    int pin = -1, value = 0;
+
+    if (*pPara++ != '=') {// skip '='
+        goto failure;
+    }
+    //获取第1个参数 Pin Name
+    if(at_data_str_copy(pinName, &pPara, sizeof(pinName)) <= 0) {
+        goto failure;
+    }
+    if (*pPara++ != ',') { // skip ','
+        goto failure;
+    }
+    //获取第2个参数 value
+    if(!at_get_next_int_dec(&pPara, &value)) {
+        goto failure;
+    }
+
+    pin = pinNameToPin(pinName);
+    if(pin < 0) {
+        goto failure;
+    }
+
+    log_v("pinName = %s, pin = %d, value = %d\r\n", pinName, pin, value);
+    digitalWrite(pin, value);
     at_response_ok();
+    return;
+
+failure:
+    at_response_error();
 }
 
 void at_setupCmdRfCheck(uint8_t id, char *pPara)
 {
     log_v("at_setupCmdRfCheck\r\n");
+#if PLATFORM_ID == PLATFORM_ANT
+    double freq = 0;
+    char datarate[16] = {0};
+    int tx_rssi, rx_rssi;
+    String retString = "";
+
+    if (*pPara++ != '=') {// skip '='
+        goto failure;
+    }
+    //获取第1个参数 freq
+    if(!at_get_next_float(&pPara, &freq)) {
+        goto failure;
+    }
+    if (*pPara++ != ',') { // skip ','
+        goto failure;
+    }
+    //获取第2个参数 datarate
+    if(at_data_str_copy(datarate, &pPara, sizeof(datarate)) <= 0) {
+        goto failure;
+    }
+
+    log_v("freq = %f, datarate = %s\r\n", freq, datarate);
+    if(rfCheck(freq, datarate, tx_rssi, rx_rssi)) {
+        retString = "+RFCHECK:";
+        retString += tx_rssi;
+        retString += ",";
+        retString += rx_rssi;
+        retString += "\r\n";
+        at_response(retString.c_str());
+        at_response_ok();
+        return;
+    }
+
+failure:
+    at_response_error();
+
+#elif PLATFORM_ID == PLATFORM_ATOM || PLATFORM_ID == PLATFORM_FIG || PLATFORM_ID == PLATFORM_NEUTRON || PLATFORM_ID == PLATFORM_NUT
+    char ssid[64] = {0};
+    uint8_t value = 0;
+    int found = 0, n = 0;
+    String retString = "";
+    WiFiAccessPoint ap[10];
+
+    if (*pPara++ != '=') {// skip '='
+        goto failure;
+    }
+    //获取第1个参数 ssid
+    if(at_data_str_copy(ssid, &pPara, sizeof(ssid)) <= 0) {
+        goto failure;
+    }
+
+    log_v("ssid = %s\r\n", ssid);
+
+    found = WiFi.scan(ap, 10);
+    if(found < 1) {
+        goto failure;
+    }
+
+    for(n = 0; n < found; n++) {
+        if(!strcmp(ap[n].ssid, ssid)) {
+            break;
+        }
+    }
+
+    if(n == found) {
+        goto failure;
+    }
+
+    retString = "+RFCHECK:\"";
+    retString += ap[n].ssid;
+    retString += "\",";
+    retString += ap[n].rssi;
+    retString += "\r\n";
+    at_response(retString.c_str());
     at_response_ok();
+    return;
+
+failure:
+    at_response_error();
+
+#else
+    at_response_ok();
+#endif
+}
+
+void at_exeCmdRfCheck(uint8_t id)
+{
+    log_v("at_exeCmdRfCheck\r\n");
+#if PLATFORM_ID == PLATFORM_FOX
+    String retString = "";
+
+    CellularSignal sig = Cellular.RSSI();
+    retString = "+RFCHECK:\"";
+    retString += sig.rssi;
+    retString += "\r\n";
+    at_response(retString.c_str());
+    at_response_ok();
+#else
+    at_response_ok();
+#endif
 }
 
 at_cmd_t at_cmd[at_cmdNum]={
@@ -123,6 +387,6 @@ at_cmd_t at_cmd[at_cmdNum]={
     {"+ANALOGREAD",   11, NULL, NULL, at_setupCmdAnalogRead, NULL},
     {"+DIGITALREAD",  12, NULL, NULL, at_setupCmdDigitalRead, NULL},
     {"+DIGITALWRITE", 13, NULL, NULL, at_setupCmdDigitalWrite, NULL},
-    {"+RFCHECK",      8,  NULL, NULL, at_setupCmdRfCheck, NULL},
+    {"+RFCHECK",      8,  NULL, NULL, at_setupCmdRfCheck, at_exeCmdRfCheck}
 };
 

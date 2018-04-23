@@ -17,39 +17,33 @@ License along with this library; if not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************
 */
 
+#ifndef MAIN_H_
+#define MAIN_H_
+
 #include "Arduino.h"
-#include "firmware_at.h"
-#include "application_config.h"
-#include "main.h"
 
-PRODUCT_ID(PRODUCT_ID_DEF)                        // 产品标识
-PRODUCT_SECRET(PRODUCT_SECRET_DEF)                // 产品密钥
-PRODUCT_SOFTWARE_VERSION(SOFTWARE_VERSION_DEF)    // 产品软件版本号
-
-int pinNameToPin(char *pinName)
+#ifdef __cplusplus
+extern "C"
 {
-    int count = sizeof(pinMap)/sizeof(pinmap_t);
-    int pin = -1;
+#endif
 
-    for(int n = 0; n < count; n++) {
-        if(!strcmp(pinName, pinMap[n].pinName)) {
-            pin = pinMap[n].pin;
-            break;
-        }
-    }
-    return pin;
-}
+typedef struct {
+    char *pinName;
+    uint16_t pin;
+} pinmap_t;
 
-void setup ()
-{
-    at_init();
-    userInit();
-}
+#define PIN_MAP_NUM   41
 
-void loop ()
-{
-    //loop 尽量不要阻塞
-    userHandle();
-    at_loop();
+extern const pinmap_t pinMap[PIN_MAP_NUM];
+
+extern void userInit(void);
+extern void userHandle(void);
+extern int pinNameToPin(char *pinName);
+extern bool rfCheck(double freq, char *datarate, int &tx_rssi, int &rx_rssi);
+
+#ifdef __cplusplus
 }
+#endif
+
+#endif
 

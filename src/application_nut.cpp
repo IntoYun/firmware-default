@@ -22,11 +22,14 @@ License along with this library; if not, see <http://www.gnu.org/licenses/>.
  * 硬件准备：  使用跳线帽把LS与A0相连
  */
 
+#include "main.h"
+
 #if PLATFORM_ID == PLATFORM_NUT
 
-PRODUCT_ID(05595c4000000352)
-PRODUCT_SECRET(603cb77eb46832ef76834bcb669e88bf)
-PRODUCT_SOFTWARE_VERSION(1.0.0)
+const pinmap_t pinMap[PIN_MAP_NUM] = {
+    {"A0", A0}, {"D0", D0}, {"D1", D1}, {"D2", D2}, {"D3", D3}, {"D4", D4}, {"D5", D5}, {"D6", D6},\
+    {"RXD", RXD}, {"TXD", TXD}
+};
 
 #define SMARTLIGHT_CMD_SWITCH           "channel/smartLight_0/cmd/switch"       //开关命令
 #define SMARTLIGHT_DATA_STATUS          "channel/smartLight_0/data/status"      //开关状态
@@ -86,7 +89,7 @@ void userInit(void)
     timerID = timerGetId();
 }
 
-void userHandle (void)
+void userHandle(void)
 {
     if(timerIsEnd(timerID, 10000)) {
         timerID = timerGetId();

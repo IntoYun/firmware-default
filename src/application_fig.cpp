@@ -21,11 +21,16 @@ License along with this library; if not, see <http://www.gnu.org/licenses/>.
  * 智能灯程序
  */
 
+#include "main.h"
+
 #if PLATFORM_ID == PLATFORM_FIG
 
-PRODUCT_ID(babd230f00000353)
-PRODUCT_SECRET(40a46ad251e7546c2eb9d008ad8d845f)
-PRODUCT_SOFTWARE_VERSION(1.0.0)
+const pinmap_t pinMap[PIN_MAP_NUM] = {
+    {"A0", A0}, {"A1", A1}, {"A2", A2}, {"A3", A3}, {"A4", A4}, {"A5", A5}, {"A6", A6}, {"A7", A7}, {"A8", A8}, {"A9", A9},\
+    {"D0", D0}, {"D1", D1}, {"D2", D2}, {"D3", D3}, {"D4", D4}, {"D5", D5}, {"D6", D6},\
+    {"RXD", RXD}, {"TXD", TXD}
+};
+
 
 #define SMARTLIGHT_CMD_SWITCH           "channel/smartLight_0/cmd/switch"       //开关命令
 #define SMARTLIGHT_DATA_STATUS          "channel/smartLight_0/data/status"      //开关状态
@@ -85,7 +90,7 @@ void userInit(void)
     timerID = timerGetId();
 }
 
-void userHandle (void)
+void userHandle(void)
 {
     if(timerIsEnd(timerID, 10000)) {
         timerID = timerGetId();

@@ -19,19 +19,25 @@ License along with this library; if not, see <http://www.gnu.org/licenses/>.
 
 /*
  * 智能灯程序
+ * 硬件准备：  使用跳线帽把LS与A6相连
  */
 
-#if PLATFORM_ID == PLATFORM_NEUTRON
+#include "main.h"
 
-PRODUCT_ID(a8a89f0c00000354)
-PRODUCT_SECRET(d0131a24abd29adcfb1c3748bba76128)
-PRODUCT_SOFTWARE_VERSION(1.0.0)
+#if PLATFORM_ID == PLATFORM_FOX
+
+const pinmap_t pinMap[PIN_MAP_NUM] = {
+    {"A0", A0}, {"A1", A1}, {"A2", A2}, {"A3", A3}, {"A4", A4}, {"A5", A5}, {"A6", A6},\
+    {"D0", D0}, {"D1", D1}, {"D2", D2}, {"D3", D3}, {"D4", D4}, {"D5", D5}, {"D6", D6}, {"D7", D7},\
+    {"RXD", RXD}, {"TXD", TXD}
+};
+
 
 #define SMARTLIGHT_CMD_SWITCH           "channel/smartLight_0/cmd/switch"       //开关命令
 #define SMARTLIGHT_DATA_STATUS          "channel/smartLight_0/data/status"      //开关状态
 
 #define LEDPIN                          LED_BUILTIN  //定义灯泡控制引脚
-#define SENSORPIN                       LIGHT_SENSOR_UC  //定义光传感器引脚
+#define SENSORPIN                       A6           //定义光传感器引脚
 
 #define DPID_BOOL_SWITCH                1  //布尔型            开关
 #define DPID_DOUBLE_ILLUMINATION        2  //数值型            光照强度
@@ -45,10 +51,10 @@ void smartLightSwitchCb(uint8_t *payload, uint32_t len)
 {
     if(payload[0] == '1')
     {
-        digitalWrite(LEDPIN, HIGH);     // 打开灯泡
+        digitalWrite(LEDPIN, LOW);     // 打开灯泡
         IntoRobot.publish(SMARTLIGHT_DATA_STATUS,"1");
     } else {
-        digitalWrite(LEDPIN, LOW);     // 关闭灯泡
+        digitalWrite(LEDPIN, HIGH);     // 关闭灯泡
         IntoRobot.publish(SMARTLIGHT_DATA_STATUS,"0");
     }
 }
@@ -59,9 +65,9 @@ void system_event_callback(system_event_t event, int param, uint8_t *data, uint1
     if ((event == event_cloud_data) && (param == ep_cloud_data_datapoint)) {
         if (RESULT_DATAPOINT_NEW == Cloud.readDatapoint(DPID_BOOL_SWITCH, dpBoolSwitch)) {
             if(dpBoolSwitch) {
-                digitalWrite(LEDPIN, HIGH);   // 打开灯泡
+                digitalWrite(LEDPIN, LOW);    // 打开灯泡
             } else {
-                digitalWrite(LEDPIN, LOW);    // 关闭灯泡
+                digitalWrite(LEDPIN, HIGH);   // 关闭灯泡
             }
         }
     }
@@ -86,7 +92,7 @@ void userInit(void)
     timerID = timerGetId();
 }
 
-void userHandle (void)
+void userHandle(void)
 {
     if(timerIsEnd(timerID, 10000)) {
         timerID = timerGetId();

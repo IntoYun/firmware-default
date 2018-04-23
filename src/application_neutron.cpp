@@ -20,26 +20,35 @@ License along with this library; if not, see <http://www.gnu.org/licenses/>.
 /*
  * 智能灯程序
  */
+#include "main.h"
 
-#if PLATFORM_ID == PLATFORM_ATOM
+#if PLATFORM_ID == PLATFORM_NEUTRON
 
-PRODUCT_ID(1ef8893400000355)
-PRODUCT_SECRET(46a4fa8496c8521185b9e4c824c9c08c)
-PRODUCT_SOFTWARE_VERSION(1.0.0)
+const pinmap_t pinMap[PIN_MAP_NUM] = {
+    {"A0", A0}, {"A1", A1}, {"A2", A2}, {"A3", A3}, {"A4", A4}, {"A5", A5}, {"A6", A6}, {"A7", A7},\
+    {"D0", D0}, {"D1", D1}, {"D2", D2}, {"D3", D3}, {"D4", D4}, {"D5", D5}, {"D6", D6}, {"D7", D7},\
+    {"RXD", RXD}, {"TXD", TXD}
+};
 
-#define SMARTLIGHT_CMD_SWITCH    "channel/smartLight_0/cmd/switch"   //开关命令
-#define SMARTLIGHT_DATA_STATUS   "channel/smartLight_0/data/status"  //开关状态
 
-#define LEDPIN                   LED_BUILTIN  //定义灯泡控制引脚
+#define SMARTLIGHT_CMD_SWITCH           "channel/smartLight_0/cmd/switch"       //开关命令
+#define SMARTLIGHT_DATA_STATUS          "channel/smartLight_0/data/status"      //开关状态
 
-#define DPID_BOOL_SWITCH         1            //布尔型            开关
+#define LEDPIN                          LED_BUILTIN  //定义灯泡控制引脚
+#define SENSORPIN                       LIGHT_SENSOR_UC  //定义光传感器引脚
 
-bool dpBoolSwitch;   // 开关
+#define DPID_BOOL_SWITCH                1  //布尔型            开关
+#define DPID_DOUBLE_ILLUMINATION        2  //数值型            光照强度
+
+bool dpBoolSwitch;                      // 开关
+double dpDoubleIllumination;            // 光照强度
+uint32_t timerID;
 
 //兼容intorobot
 void smartLightSwitchCb(uint8_t *payload, uint32_t len)
 {
-    if(payload[0] == '1') {
+    if(payload[0] == '1')
+    {
         digitalWrite(LEDPIN, HIGH);     // 打开灯泡
         IntoRobot.publish(SMARTLIGHT_DATA_STATUS,"1");
     } else {
@@ -54,9 +63,9 @@ void system_event_callback(system_event_t event, int param, uint8_t *data, uint1
     if ((event == event_cloud_data) && (param == ep_cloud_data_datapoint)) {
         if (RESULT_DATAPOINT_NEW == Cloud.readDatapoint(DPID_BOOL_SWITCH, dpBoolSwitch)) {
             if(dpBoolSwitch) {
-                digitalWrite(LEDPIN, HIGH);    // 打开灯泡
+                digitalWrite(LEDPIN, HIGH);   // 打开灯泡
             } else {
-                digitalWrite(LEDPIN, LOW);     // 关闭灯泡
+                digitalWrite(LEDPIN, LOW);    // 关闭灯泡
             }
         }
     }
@@ -66,6 +75,7 @@ void userInit(void)
 {
     //初始化
     pinMode(LEDPIN, OUTPUT);
+    pinMode(SENSORPIN, AN_INPUT);
 
     //兼容intorobot
     //接收灯开关命令
@@ -75,10 +85,25 @@ void userInit(void)
     System.on(event_cloud_data, system_event_callback);
     //定义产品数据点
     Cloud.defineDatapointBool(DPID_BOOL_SWITCH, DP_PERMISSION_UP_DOWN, false); //开关
+    Cloud.defineDatapointNumber(DPID_DOUBLE_ILLUMINATION, DP_PERMISSION_UP_ONLY, 0, 10000, 1, 0); //光照强度
+
+    timerID = timerGetId();
 }
 
-void userHandle (void)
+void userHandle(void)
 {
+    if(timerIsEnd(timerID, 10000)) {
+        timerID = timerGetId();
+
+        int data = analogRead(SENSORPIN);
+        if (data == 0) {
+            dpDoubleIllumination = 0.0;
+        } else {
+            dpDoubleIllumination = -2.712e-08 * data * data * data - 5.673e-05 * data * data  + 1.788 * data + 122.1;
+        }
+        //更新数据点数据（数据点具备上送属性）
+        Cloud.writeDatapoint(DPID_DOUBLE_ILLUMINATION, dpDoubleIllumination);
+    }
 }
 
 #endif
