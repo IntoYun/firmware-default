@@ -43,10 +43,13 @@ void at_setupCmdE(uint8_t id, char *pPara)
     } else if(*pPara == '1') {
         echoFlag = TRUE;
     } else {
-        at_response_error();
-        return;
+        goto failure;
     }
     at_response_ok();
+    return;
+
+failure:
+    at_response_error();
 }
 
 void at_exeCmdRst(uint8_t id)
