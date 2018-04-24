@@ -1,21 +1,21 @@
 {
     "intorobot-atom": {
-        "version": "3.6.6.0"
+        "version": "3.6.7.0"
     },
     "intorobot-neutron": {
-        "version": "2.0.2.3"
+        "version": "2.0.3.3"
     },
     "intorobot-nut": {
-        "version": "1.0.3.3"
+        "version": "1.0.4.3"
     },
     "intorobot-fig": {
-        "version": "1.0.2.3"
+        "version": "1.0.3.3"
     },
     "intorobot-fox": {
-        "version": "1.0.1.1"
+        "version": "1.0.2.1"
     },
     "intorobot-ant": {
-        "version": "1.0.0.1"
+        "version": "1.0.1.1"
     }
 }
 
