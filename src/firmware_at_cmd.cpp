@@ -107,7 +107,7 @@ void at_setupCmdGetPinMode(uint8_t id, char *pPara)
     log_v("at_setupCmdGetPinMode\r\n");
     char pinName[16] = {0};
     int pin = -1;
-    String retString = "";
+    String respString = "";
     PinMode mode = OUTPUT;
 
     if (*pPara++ != '=') {// skip '='
@@ -126,10 +126,10 @@ void at_setupCmdGetPinMode(uint8_t id, char *pPara)
     log_v("pinName = %s, pin = %d\r\n", pinName, pin);
 
     mode = getPinMode(pin);
-    retString = "+GETPINMODE:";
-    retString += (int)mode;
-    retString += "\r\n";
-    at_response(retString.c_str());
+    respString = "+GETPINMODE:";
+    respString += (int)mode;
+    respString += "\r\n";
+    at_response(respString.c_str());
     at_response_ok();
     return;
 
@@ -177,7 +177,7 @@ void at_setupCmdAnalogRead(uint8_t id, char *pPara)
     log_v("at_setupCmdAnalogRead\r\n");
     char pinName[16] = {0};
     int pin = -1;
-    String retString = "";
+    String respString = "";
 
     if (*pPara++ != '=') {// skip '='
         goto failure;
@@ -193,10 +193,10 @@ void at_setupCmdAnalogRead(uint8_t id, char *pPara)
     }
 
     log_v("pinName = %s, pin = %d\r\n", pinName, pin);
-    retString = "+ANALOGREAD:";
-    retString += analogRead(pin);
-    retString += "\r\n";
-    at_response(retString.c_str());
+    respString = "+ANALOGREAD:";
+    respString += analogRead(pin);
+    respString += "\r\n";
+    at_response(respString.c_str());
     at_response_ok();
     return;
 
@@ -209,7 +209,7 @@ void at_setupCmdDigitalRead(uint8_t id, char *pPara)
     log_v("at_setupCmdDigitalRead\r\n");
     char pinName[16] = {0};
     int pin = -1;
-    String retString = "";
+    String respString = "";
 
     if (*pPara++ != '=') {// skip '='
         goto failure;
@@ -225,10 +225,10 @@ void at_setupCmdDigitalRead(uint8_t id, char *pPara)
     }
 
     log_v("pinName = %s, pin = %d\r\n", pinName, pin);
-    retString = "+DIGITALREAD:";
-    retString += digitalRead(pin);
-    retString += "\r\n";
-    at_response(retString.c_str());
+    respString = "+DIGITALREAD:";
+    respString += digitalRead(pin);
+    respString += "\r\n";
+    at_response(respString.c_str());
     at_response_ok();
     return;
 
@@ -278,7 +278,7 @@ void at_setupCmdRfCheck(uint8_t id, char *pPara)
     double freq = 0;
     char datarate[16] = {0};
     int tx_rssi, rx_rssi;
-    String retString = "";
+    String respString = "";
 
     if (*pPara++ != '=') {// skip '='
         goto failure;
@@ -297,12 +297,12 @@ void at_setupCmdRfCheck(uint8_t id, char *pPara)
 
     log_v("freq = %f, datarate = %s\r\n", freq, datarate);
     if(rfCheck(freq, datarate, tx_rssi, rx_rssi)) {
-        retString = "+RFCHECK:";
-        retString += tx_rssi;
-        retString += ",";
-        retString += rx_rssi;
-        retString += "\r\n";
-        at_response(retString.c_str());
+        respString = "+RFCHECK:";
+        respString += tx_rssi;
+        respString += ",";
+        respString += rx_rssi;
+        respString += "\r\n";
+        at_response(respString.c_str());
         at_response_ok();
         return;
     }
@@ -314,7 +314,7 @@ failure:
     char ssid[64] = {0};
     uint8_t value = 0;
     int found = 0, n = 0;
-    String retString = "";
+    String respString = "";
     WiFiAccessPoint ap[10];
 
     if (*pPara++ != '=') {// skip '='
@@ -342,12 +342,12 @@ failure:
         goto failure;
     }
 
-    retString = "+RFCHECK:\"";
-    retString += ap[n].ssid;
-    retString += "\",";
-    retString += ap[n].rssi;
-    retString += "\r\n";
-    at_response(retString.c_str());
+    respString = "+RFCHECK:\"";
+    respString += ap[n].ssid;
+    respString += "\",";
+    respString += ap[n].rssi;
+    respString += "\r\n";
+    at_response(respString.c_str());
     at_response_ok();
     return;
 
@@ -363,13 +363,13 @@ void at_exeCmdRfCheck(uint8_t id)
 {
     log_v("at_exeCmdRfCheck\r\n");
 #if PLATFORM_ID == PLATFORM_FOX
-    String retString = "";
+    String respString = "";
 
     CellularSignal sig = Cellular.RSSI();
-    retString = "+RFCHECK:\"";
-    retString += sig.rssi;
-    retString += "\r\n";
-    at_response(retString.c_str());
+    respString = "+RFCHECK:\"";
+    respString += sig.rssi;
+    respString += "\r\n";
+    at_response(respString.c_str());
     at_response_ok();
 #else
     at_response_ok();
