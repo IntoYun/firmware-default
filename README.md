@@ -2,11 +2,11 @@
 
 ## 1. 概述
 
-default-firmware 属于开发板的默认出厂程序。
+firmware-default 属于开发板的默认出厂程序。
 
 ## 2. 工程结构
 
-default-firmware 工程结构如下：
+firmware-default 工程结构如下：
 
 ```
 |-- docs            : 工程文档
@@ -19,7 +19,7 @@ default-firmware 工程结构如下：
 
 ## 3. 编译与调试
 
-default-firmware 采取intoyuniot编译，具体如下：
+firmware-default 采取intoyuniot编译，具体如下：
 
 ```
 intoyuniot run -t clean   # 清除临时文件
