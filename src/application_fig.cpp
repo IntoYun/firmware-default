@@ -35,7 +35,7 @@ const pinmap_t pinMap[PIN_MAP_NUM] = {
 #define SMARTLIGHT_CMD_SWITCH           "channel/smartLight_0/cmd/switch"       //开关命令
 #define SMARTLIGHT_DATA_STATUS          "channel/smartLight_0/data/status"      //开关状态
 
-#define LEDPIN                          LED_BUILTIN  //定义灯泡控制引脚
+#define LEDPIN                          LED_BUILTIN      //定义灯泡控制引脚
 #define SENSORPIN                       LIGHT_SENSOR_UC  //定义光传感器引脚
 
 #define DPID_BOOL_SWITCH                1  //布尔型            开关
@@ -59,35 +59,39 @@ void smartLightSwitchCb(uint8_t *payload, uint32_t len)
 
 void system_event_callback(system_event_t event, int param, uint8_t *data, uint16_t datalen)
 {
-    //if ((event == event_cloud_data) && (param == ep_cloud_comm_data)) {
-    if ((event == event_cloud_data) && (param == ep_cloud_data_datapoint)) {
-        if (RESULT_DATAPOINT_NEW == Cloud.readDatapoint(DPID_BOOL_SWITCH, dpBoolSwitch)) {
-            if(dpBoolSwitch) {
-                digitalWrite(LEDPIN, LOW);    // 打开灯泡
-            } else {
-                digitalWrite(LEDPIN, HIGH);   // 关闭灯泡
-            }
+    if(event == event_cloud_comm) {
+        switch(param) {
+            case ep_cloud_comm_data:
+                if (RESULT_DATAPOINT_NEW == Cloud.readDatapoint(DPID_BOOL_SWITCH, dpBoolSwitch)) {
+                    if(dpBoolSwitch) {
+                        digitalWrite(LEDPIN, LOW);    // 打开灯泡
+                    } else {
+                        digitalWrite(LEDPIN, HIGH);     // 关闭灯泡
+                    }
+                }
+                Cloud.sendDatapointAll();
+            default:
+                break;
         }
     }
 }
 
 void userInit(void)
 {
-    //初始化
-    pinMode(LEDPIN, OUTPUT);
-    pinMode(SENSORPIN, AN_INPUT);
-
-    //兼容intorobot
-    //接收灯开关命令
-    IntoRobot.subscribe(SMARTLIGHT_CMD_SWITCH, NULL, smartLightSwitchCb);
-
     //定义数据点事件
-    System.on(event_cloud_data, system_event_callback);
+    System.on(event_all, system_event_callback);
+    //设置数据上报手动处理
+    Cloud.datapointControl(DP_TRANSMIT_MODE_MANUAL);
     //定义产品数据点
     Cloud.defineDatapointBool(DPID_BOOL_SWITCH, DP_PERMISSION_UP_DOWN, false); //开关
     Cloud.defineDatapointNumber(DPID_DOUBLE_ILLUMINATION, DP_PERMISSION_UP_ONLY, 0, 10000, 1, 0); //光照强度
 
+    /*************此处修改和添加用户初始化代码**************/
+    pinMode(LEDPIN, OUTPUT);
+    pinMode(SENSORPIN, AN_INPUT);
+    IntoRobot.subscribe(SMARTLIGHT_CMD_SWITCH, NULL, smartLightSwitchCb); //兼容intorobot
     timerID = timerGetId();
+    /*******************************************************/
 }
 
 void userHandle(void)
@@ -103,6 +107,8 @@ void userHandle(void)
         }
         //更新数据点数据（数据点具备上送属性）
         Cloud.writeDatapoint(DPID_DOUBLE_ILLUMINATION, dpDoubleIllumination);
+        //数据上报手动处理
+        Cloud.sendDatapointAll();
     }
 }
 

@@ -48,26 +48,26 @@ uint32_t timerID;
 
 void system_event_callback(system_event_t event, int param, uint8_t *data, uint16_t datalen)
 {
-    //if ((event == event_cloud_data) && (param == ep_cloud_comm_data)) {
-    if ((event == event_cloud_data) && (param == ep_cloud_data_datapoint)) {
-        /*************此处修改和添加用户控制代码*************/
-        if (RESULT_DATAPOINT_NEW == Cloud.readDatapoint(DPID_BOOL_SWITCH, dpBoolSwitch)) {
-            if(dpBoolSwitch) {
-                digitalWrite(LEDPIN, LOW);    // 打开灯泡
-            } else {
-                digitalWrite(LEDPIN, HIGH);   // 关闭灯泡
-            }
+    if(event == event_cloud_comm) {
+        switch(param) {
+            case ep_cloud_comm_data:
+                if (RESULT_DATAPOINT_NEW == Cloud.readDatapoint(DPID_BOOL_SWITCH, dpBoolSwitch)) {
+                    if(dpBoolSwitch) {
+                        digitalWrite(LEDPIN, LOW);    // 打开灯泡
+                    } else {
+                        digitalWrite(LEDPIN, HIGH);   // 关闭灯泡
+                    }
+                }
+            default:
+                break;
         }
-        Cloud.sendDatapointAll(0, 120);
-        /*******************************************************/
     }
 }
 
 void userInit(void)
 {
     //定义数据点事件
-    System.on(event_cloud_data, system_event_callback);
-
+    System.on(event_all, system_event_callback);
     //根据网关参数具体设置
     LoRaWan.setDataRate(DR_3);
     LoRaWan.setChannelStatus(0, false);               //关闭通道0 频率固定：433175000
@@ -76,15 +76,13 @@ void userInit(void)
     LoRaWan.setChannelFreq(2, 433575000);             //设置通道2频率
     LoRaWan.setChannelDRRange(2, DR_3, DR_3);         //设置通道2速率范围
     LoRaWan.setChannelStatus(3, false);               //关闭通道3
-
+    LoRaWan.setDutyCyclePrescaler(1);                 //设置占空比
     //定义产品数据点
     Cloud.defineDatapointBool(DPID_BOOL_SWITCH, DP_PERMISSION_UP_DOWN, false); //开关
     Cloud.defineDatapointNumber(DPID_DOUBLE_TEMPERATURE, DP_PERMISSION_UP_ONLY, 0, 100, 1, 0); //温度
     Cloud.defineDatapointNumber(DPID_INT32_HUMIDITY, DP_PERMISSION_UP_ONLY, 0, 100, 0, 0); //湿度
     Cloud.defineDatapointNumber(DPID_DOUBLE_ILLUMINATION, DP_PERMISSION_UP_ONLY, 0, 10000, 1, 0); //光照强度
-
     /*************此处修改和添加用户初始化代码**************/
-    //初始化
     pinMode(LEDPIN, OUTPUT);
     pinMode(SENSORPIN, AN_INPUT);
 
