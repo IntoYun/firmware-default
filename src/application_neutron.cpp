@@ -57,7 +57,7 @@ void smartLightSwitchCb(uint8_t *payload, uint32_t len)
     }
 }
 
-void system_event_callback(system_event_t event, int param, uint8_t *data, uint16_t datalen)
+void eventProcess(system_event_t event, int param, uint8_t *data, uint16_t datalen)
 {
     if(event == event_cloud_comm) {
         switch(param) {
@@ -79,7 +79,7 @@ void system_event_callback(system_event_t event, int param, uint8_t *data, uint1
 void userInit(void)
 {
     //定义数据点事件
-    System.on(event_all, system_event_callback);
+    System.on(event_all, eventProcess);
     //设置数据上报手动处理
     Cloud.datapointControl(DP_TRANSMIT_MODE_MANUAL);
     //定义产品数据点

@@ -46,7 +46,7 @@ int32_t dpInt32Humidity = 56;           // 湿度
 double dpDoubleIllumination;            // 光照强度
 uint32_t timerID;
 
-void system_event_callback(system_event_t event, int param, uint8_t *data, uint16_t datalen)
+void eventProcess(system_event_t event, int param, uint8_t *data, uint16_t datalen)
 {
     if(event == event_cloud_comm) {
         switch(param) {
@@ -67,7 +67,7 @@ void system_event_callback(system_event_t event, int param, uint8_t *data, uint1
 void userInit(void)
 {
     //定义数据点事件
-    System.on(event_all, system_event_callback);
+    System.on(event_all, eventProcess);
     //根据网关参数具体设置
     LoRaWan.setDataRate(DR_3);
     LoRaWan.setChannelStatus(0, false);               //关闭通道0 频率固定：433175000
