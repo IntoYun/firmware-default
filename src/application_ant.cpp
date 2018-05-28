@@ -85,6 +85,7 @@ void userInit(void)
     /*************此处修改和添加用户初始化代码**************/
     pinMode(LEDPIN, OUTPUT);
     pinMode(SENSORPIN, AN_INPUT);
+    digitalWrite(LEDPIN, HIGH);    // 默认关闭灯泡
 
     timerID = timerGetId();
     /*******************************************************/

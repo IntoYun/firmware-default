@@ -84,6 +84,8 @@ void userInit(void)
 
     /*************此处修改和添加用户初始化代码**************/
     pinMode(LEDPIN, OUTPUT);
+    digitalWrite(LEDPIN, LOW);    // 默认关闭灯泡
+
     IntoRobot.subscribe(SMARTLIGHT_CMD_SWITCH, NULL, smartLightSwitchCb); //兼容intorobot
     /*******************************************************/
 }

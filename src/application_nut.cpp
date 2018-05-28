@@ -65,7 +65,7 @@ void eventProcess(system_event_t event, int param, uint8_t *data, uint16_t datal
                     if(dpBoolSwitch) {
                         digitalWrite(LEDPIN, LOW);    // 打开灯泡
                     } else {
-                        digitalWrite(LEDPIN, HIGH);     // 关闭灯泡
+                        digitalWrite(LEDPIN, HIGH);   // 关闭灯泡
                     }
                 }
                 Cloud.sendDatapointAll();
@@ -88,6 +88,8 @@ void userInit(void)
     /*************此处修改和添加用户初始化代码**************/
     pinMode(LEDPIN, OUTPUT);
     pinMode(SENSORPIN, AN_INPUT);
+    digitalWrite(LEDPIN, HIGH);    // 默认关闭灯泡
+
     IntoRobot.subscribe(SMARTLIGHT_CMD_SWITCH, NULL, smartLightSwitchCb); //兼容intorobot
     timerID = timerGetId();
     /*******************************************************/
