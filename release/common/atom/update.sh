@@ -25,16 +25,31 @@ else    #linux
     SUDO=sudo
 fi
 
-cecho "-------ant软件升级--------" $yellow
-cecho "1.下载应用程序   ... \c" $green
-$SUDO $ST_TOOL --reset write firmware.bin 0x08000000
-if [ $? = 0 ]; then
-    result=0
-    cecho "成功" $yellow
-else
-    result=-1
-    cecho "失败" $red
-fi
+cecho "-------IntoRobot Atom软件升级--------" $yellow
+cecho "-->请选择下载内容(回车默认选择1):    " $yellow
+cecho "1. 完整包     (请确保连接ST-LINK)    " $yellow
+cecho "其他退出                             " $yellow
+select_type=1
+read select_type
+
+case "$select_type" in
+    1)
+        cecho "1.下载应用程序   ... \c" $green
+        $SUDO $ST_TOOL --reset write firmware.bin 0x08000000
+        if [ $? = 0 ]; then
+            result=0
+            cecho "成功" $yellow
+        else
+            result=-1
+            cecho "失败" $red
+        fi
+        fi
+        ;;
+
+    *)
+        exit 0
+        ;;
+esac
 
 if [ $result = 0 ]; then
     cecho "-------升级成功------" $yellow

@@ -5,8 +5,9 @@ set ST_TOOL=tools/stlink/win/st-flash.exe
 
 :start
 
-echo -------Ant固件升级--------
-echo     (请确保连接ST-LINK)
+echo -------IntoRobot Atom固件升级--------
+echo 请选择下载内容(回车默认选择1):
+echo 1. 完整包    (请确保连接ST-LINK)
 
 pause
 

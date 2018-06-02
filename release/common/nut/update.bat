@@ -7,7 +7,7 @@ set UPLOAD_PORT=COM1
 
 :start
 
-echo -------nut软件升级--------
+echo -------IntoRobot Nut软件升级--------
 
 set usart_port=%UPLOAD_PORT%
 set /p usart_port=请输入串口(回车默认输入COM1):

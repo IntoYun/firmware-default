@@ -36,8 +36,7 @@ FLASH_SIZE=4MB
 FLASH_MODE=qio
 FLASH_SPEED=40m
 
-
-cecho "-------fig软件升级--------" $yellow
+cecho "-------IntoRobot Fig软件升级--------" $yellow
 if [ $sysType = "Darwin" ]; then    # osx
     cecho "-->请输入串口(回车默认输入/dev/cu.SLAB_USBtoUART): " $yellow
 else

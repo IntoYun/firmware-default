@@ -12,7 +12,7 @@ set FLASH_SPEED=40m
 
 :start
 
-echo -------fig软件升级--------
+echo -------IntoRobot Fig软件升级--------
 
 set usart_port=%UPLOAD_PORT%
 set /p usart_port=请输入串口(回车默认输入COM1):

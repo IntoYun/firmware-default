@@ -174,11 +174,10 @@ def generate_package_impl(board):
     # 编译默认工程
     if board == 'ant' or board == 'fox' or board == 'neutron':
         copy_to_dir(join(release_tools_dir, 'stlink'), release_temp_board_version_tools_dir)
-        copy_to_dir(join(release_tools_dir, 'upload-reset'), release_temp_board_version_tools_dir)
         copy_to_dir(join(release_tools_dir, 'dfu-util'), release_temp_board_version_tools_dir)
     elif board == 'atom':
         copy_to_dir(join(release_tools_dir, 'stlink'), release_temp_board_version_tools_dir)
-    elif board == 'nut':
+    elif board == 'nut' or board == 'neutron':
         copy_to_dir(join(release_tools_dir, 'esp8266'), release_temp_board_version_tools_dir)
     elif board == 'fig':
         copy_to_dir(join(release_tools_dir, 'esp32'), release_temp_board_version_tools_dir)

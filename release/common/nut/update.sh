@@ -32,7 +32,7 @@ else    #linux
 fi
 
 
-cecho "-------nut软件升级--------" $yellow
+cecho "-------IntoRobot Nut软件升级--------" $yellow
 if [ $sysType = "Darwin" ]; then    # osx
     cecho "-->请输入串口(回车默认输入/dev/cu.SLAB_USBtoUART): " $yellow
 else
