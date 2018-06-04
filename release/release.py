@@ -57,7 +57,7 @@ board_info_list = [
         ['fig', '3', 'intorobot-fig'],
         ['ant', '4', 'intorobot-ant'],
         ['fox', '5', 'intorobot-fox'],
-        ['atom', '6', 'intorobot-atom']
+#        ['atom', '6', 'intorobot-atom']
         ]
 
 def get_board_info_list():
