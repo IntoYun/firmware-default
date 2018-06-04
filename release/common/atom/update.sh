@@ -29,8 +29,11 @@ cecho "-------IntoRobot Atom软件升级--------" $yellow
 cecho "-->请选择下载内容(回车默认选择1):    " $yellow
 cecho "1. 完整包     (请确保连接ST-LINK)    " $yellow
 cecho "其他退出                             " $yellow
-select_type=1
+
 read select_type
+if [ -z "${select_type}" ];then
+  select_type=1
+fi
 
 case "$select_type" in
     1)

@@ -13,6 +13,8 @@ yellow='\033[0;33m'
 blue='\033[0;34m'
 
 #下载工具
+sysType=`uname -s`
+cecho "----您的系统是 $sysType ------" $green
 if [ $sysType = "Darwin" ]; then    # osx
     ESP8266_TOOL=./tools/esp8266/osx/esptool
     ST_TOOL=./tools/stlink/osx/st-flash
@@ -40,9 +42,12 @@ cecho "-->请选择下载内容(回车默认选择1):                  " $yellow
 cecho "1. 应用程序      (请手动进入DFU模式)               " $yellow
 cecho "2. 完整包        (请确保连接ST-LINK)               " $yellow
 cecho "3. 升级esp8266   (请确保neutron进入esp8266升级模式)" $yellow
+cecho "其他退出                                           " $yellow
 
-select_type=1
 read select_type
+if [ -z "${select_type}" ];then
+  select_type=1
+fi
 
 case "$select_type" in
     1)
@@ -126,6 +131,7 @@ case "$select_type" in
         ;;
 
     *)
+        exit 0
         ;;
 esac
 

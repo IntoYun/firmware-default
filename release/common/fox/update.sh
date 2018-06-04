@@ -33,9 +33,12 @@ cecho "-->请选择下载内容(回车默认选择1):    " $yellow
 cecho "1. 应用程序      (请手动进入DFU模式) " $yellow
 cecho "2. 完整包        (请确保连接ST-LINK) " $yellow
 cecho "3. 升级spi-flash (请手动进入DFU模式) " $yellow
+cecho "其他退出                             " $yellow
 
-select_type=1
 read select_type
+if [ -z "${select_type}" ];then
+  select_type=1
+fi
 
 case "$select_type" in
     1)
@@ -54,7 +57,7 @@ case "$select_type" in
 
     2)
         cecho "下载bootloader ... \c" $green
-        $SUDO $ST_TOOL write boot-v2.bin 0x8000000
+        $SUDO $ST_TOOL write boot-v1.bin 0x8000000
         if [ $? = 0 ]; then
             cecho "成功" $yellow
             sleep 1
@@ -88,6 +91,7 @@ case "$select_type" in
         ;;
 
     *)
+        exit 0
         ;;
 esac
 
