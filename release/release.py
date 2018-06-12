@@ -159,10 +159,12 @@ def generate_package_impl(product_name):
     copy(join(project_dir, '.intoiotenvs/%s/firmware.bin' % module), join(release_temp_product_version_dir, 'firmware.bin'))
 
     # 编译默认工程
-    if module == 'intorobot-ant' or module == 'intorobot-fox' or module == 'intorobot-neutron' or module == 'intorobot-l6' or module == 'intorobot-atom':
+    if module == 'intorobot-ant' or module == 'intorobot-fox' or module == 'intorobot-neutron' or module == 'intorobot-l6' or module == 'intorobot-atom' or module == 'intorobot-gl2000' or module == 'intorobot-gl2100':
         copy_to_dir(join(release_common_tools_dir, 'stlink'), release_temp_product_version_tools_dir)
-    if module == 'intorobot-ant' or module == 'intorobot-fox' or module == 'intorobot-neutron' or module == 'intorobot-l6':
+    if module == 'intorobot-ant' or module == 'intorobot-fox' or module == 'intorobot-neutron' or module == 'intorobot-l6' or module == 'intorobot-gl2000' or module == 'intorobot-gl2100':
         copy_to_dir(join(release_common_tools_dir, 'dfu-util'), release_temp_product_version_tools_dir)
+    if module == 'intorobot-gl2000' or module == 'intorobot-gl2100':
+        copy_to_dir(join(release_common_tools_dir, 'upload-reset'), release_temp_product_version_tools_dir)
     if module == 'intorobot-nut' or module == 'intorobot-neutron' or module == 'intorobot-w67':
         copy_to_dir(join(release_common_tools_dir, 'esp8266'), release_temp_product_version_tools_dir)
     if module == 'intorobot-fig' or module == 'intorobot-w323':
