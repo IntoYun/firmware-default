@@ -1,0 +1,48 @@
+{
+    "default-atom": {
+        "index": "1",
+        "module": "intorobot-atom",
+        "version": "1.0.5"
+    },
+    "default-neutron": {
+        "index": "2",
+        "module": "intorobot-neutron",
+        "version": "1.0.5"
+    },
+    "default-nut": {
+        "index": "3",
+        "module": "intorobot-nut",
+        "version": "1.0.5"
+    },
+    "default-fig": {
+        "index": "4",
+        "module": "intorobot-fig",
+        "version": "1.0.5"
+    },
+    "default-fox": {
+        "index": "5",
+        "module": "intorobot-fox",
+        "version": "1.0.5"
+    },
+    "default-ant": {
+        "index": "6",
+        "module": "intorobot-ant",
+        "version": "1.0.5"
+    },
+    "default-w67": {
+        "index": "7",
+        "module": "intorobot-w67",
+        "version": "1.0.5"
+    },
+    "default-w323": {
+        "index": "8",
+        "module": "intorobot-w323",
+        "version": "1.0.5"
+    },
+    "default-l6": {
+        "index": "9",
+        "module": "intorobot-l6",
+        "version": "1.0.5"
+    }
+}
+
