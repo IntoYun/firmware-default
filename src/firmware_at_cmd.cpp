@@ -376,7 +376,7 @@ void at_exeCmdRfCheck(uint8_t id)
 #endif
 }
 
-at_cmd_t at_cmd[at_cmdNum]={
+const at_cmd_t at_cmd[at_cmdNum]={
     //基础AT指令
     {NULL,            0,  NULL, NULL, NULL, at_exeCmdNull},
     {"E",             1,  NULL, NULL, at_setupCmdE, NULL},

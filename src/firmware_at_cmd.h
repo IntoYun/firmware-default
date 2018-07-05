@@ -37,7 +37,7 @@ typedef struct
 
 #define at_cmdNum   12
 
-extern at_cmd_t at_cmd[at_cmdNum];
+extern const at_cmd_t at_cmd[at_cmdNum];
 
 #ifdef __cplusplus
 }

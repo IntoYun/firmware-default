@@ -34,7 +34,7 @@
 // 4 - FIRMWARE_LOG_LEVEL_DEBUG    :  打印调试信息
 // 5 - FIRMWARE_LOG_LEVEL_VERBOSE  :  打印详细信息     最低级别
 
-#define FIRMWARE_DEBUG_LEVEL                 5
+#define FIRMWARE_DEBUG_LEVEL                 0
 
 #endif
 
