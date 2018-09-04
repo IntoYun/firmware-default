@@ -40,6 +40,13 @@ int pinNameToPin(char *pinName)
     return pin;
 }
 
+void init_before_setup(void)
+{
+    //Log.setLevel("*", MOLMC_LOG_VERBOSE);
+}
+
+STARTUP( init_before_setup() );
+
 void setup ()
 {
     at_init();
