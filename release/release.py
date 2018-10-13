@@ -127,9 +127,9 @@ def select_package_release_server():
 '''
     item = raw_input(package_release_server_item_string);
     if item == '1':
-        server_name = 'test-web1'
+        server_name = 'dev-ecs1'
     elif item == '2':
-        server_name = 'prod-yun'
+        server_name = 'prd-iy-vpc2'
     else:
         exit()
     return server_name
@@ -179,7 +179,7 @@ def release_package_impl(product_name, server):
     package_version_tar_name = package_version_name + '.tar.gz'
     release_temp_product_version_tar_path = join(release_temp_product_dir, package_version_tar_name)
     echo("1. 正在打包程序包(版本号: %s) ... " % package_version, 'blue')
-    cmd = "cd %s && rm -rf %s && tar -czf %s %s && rm -rf %s" % (release_temp_product_dir, package_version_tar_name, package_version_tar_name, package_version_name, package_version_name)
+    cmd = "cd %s && rm -rf %s && tar -czf %s %s" % (release_temp_product_dir, package_version_tar_name, package_version_tar_name, package_version_name)
     subprocess.call(cmd, shell=True)
 
     server_modules_packages_dir = join(server + ':/var/www/downloads/terminal/modules/package', product_name)
@@ -243,9 +243,9 @@ def enter_server():
 '''
     item = raw_input(enter_server_item_string);
     if item == '1':
-        server_name = 'test-web1'
+        server_name = 'dev-ecs1'
     elif item == '2':
-        server_name = 'prod-yun'
+        server_name = 'prd-iy-vpc2'
     else:
         exit()
 
@@ -258,7 +258,7 @@ if __name__ == '__main__':
 ===========================================================
 1. 生成产品软件包
 2. 上传产品软件包
-3. 进入生成平台
+3. 进入生产平台
 ==========================================================
 其他退出
 '''
